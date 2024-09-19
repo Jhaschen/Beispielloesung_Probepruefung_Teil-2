@@ -1,5 +1,7 @@
 #include "VoltageStatistics.h"
 
+ USART UART(8,0,1,57600);	// USART init 8 Zeichenbits , keien Paritätsbits , 1 Stoppbit, 9600 Zeichen pro Sekunde
+     
 
 VoltageStatistics::VoltageStatistics()
 {
@@ -22,7 +24,6 @@ uint16_t VoltageStatistics::convertMilliVoltage(uint16_t value)
 bool VoltageStatistics::sendCanMessages(bool activ, can_t* send, uint16_t lastValue,uint32_t timestamp100ms)
 {  
 
-   USART UART(8,0,1,57600);	// USART init 8 Zeichenbits , keien Paritätsbits , 1 Stoppbit, 9600 Zeichen pro Sekunde
    char buffer[100];		// Buffer zur Zwschischenspeicherung von Zeichenketten
    
    // Ausgabe
@@ -79,13 +80,12 @@ bool VoltageStatistics::sendCanMessages(bool activ, can_t* send, uint16_t lastVa
  }    
 
 void VoltageStatistics::showStatistics(){
-    USART UART(8,0,1,57600);	// USART init 8 Zeichenbits , keien Paritätsbits , 1 Stoppbit, 9600 Zeichen pro Sekunde
-     char buffer[250];
+    
 	 uint16_t min = 65535;
 	 uint16_t max = 0;
 	 uint32_t summe = 0;
 	 uint16_t mittelwert;
-
+     char buffer[100];
 
 	for(uint8_t i=0;i<valueSize;i++)
 	{
@@ -100,6 +100,6 @@ void VoltageStatistics::showStatistics(){
 
 	}
 	mittelwert= (uint16_t)((summe/((uint32_t)valueSize)));
-	sprintf(buffer,"mittlere Spannung: %d mV; kleinste Spannung: %d mV; groesste Spannung: %d mV \n\r",mittelwert, min, max);	// Zeichenkette erzeugen und in dn Zwischenspeicher schreiben
+	sprintf(buffer," mittlere Spannung: %5u mV; kleinste Spannung: %5u mV; groesste Spannung: %5u mV\n\r",mittelwert, min, max);	// Zeichenkette erzeugen und in dn Zwischenspeicher schreiben
 	UART.UsartPuts(buffer);		   // Ausgabe
 }
