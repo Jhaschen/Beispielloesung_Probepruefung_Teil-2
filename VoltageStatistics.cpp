@@ -15,11 +15,11 @@ uint16_t VoltageStatistics::readValue(uint8_t kanal)
 
 uint16_t VoltageStatistics::convertMilliVoltage(uint16_t value)
 {
-  return((((1000UL*refVoltage*value)/adc_steps)));
+  return((((1000UL*refVoltage*value)/adcSteps)));
 
 }
 
-bool VoltageStatistics::sendCanMessages(bool activ, can_t* send, uint16_t lastValue,uint32_t Zeitstempel_100ms)
+bool VoltageStatistics::sendCanMessages(bool activ, can_t* send, uint16_t lastValue,uint32_t timestamp100ms)
 {  
 
    USART UART(8,0,1,57600);	// USART init 8 Zeichenbits , keien Paritätsbits , 1 Stoppbit, 9600 Zeichen pro Sekunde
@@ -29,14 +29,14 @@ bool VoltageStatistics::sendCanMessages(bool activ, can_t* send, uint16_t lastVa
   if(activ==true)
   {
      
-     send->data[0]=(lastValue & 0xFF);
-	 send->data[1]=((lastValue>>8)&0xFF);
+     send->data[0]=(uint8_t) lastValue;
+	 send->data[1]=(uint8_t)(lastValue>>8);
 
      
    	 if(can_send_message(send))		// CAN-Nachricht versenden
 		{
 		 TGL_BIT(LED_PORT,1);
-		 sprintf(buffer,"%ld ms: 0x%x - - %d \n\r",(Zeitstempel_100ms),send->id,lastValue);	// Zeichenkette erzeugen und in dn Zwischenspeicher schreiben
+		 sprintf(buffer,"%ld ms: 0x%x - - %d \n\r",(timestamp100ms),send->id,lastValue);	// Zeichenkette erzeugen und in dn Zwischenspeicher schreiben
          UART.UsartPuts(buffer);		   // Ausgabe
 		 return true;
 		}else{
@@ -52,7 +52,7 @@ bool VoltageStatistics::sendCanMessages(bool activ, can_t* send, uint16_t lastVa
       if(can_send_message(send))		// CAN-Nachricht versenden
 		{
 		 TGL_BIT(LED_PORT,2);
-	     sprintf(buffer,"%ld ms: 0x%x \n\r",Zeitstempel_100ms,send->id);	// Zeichenkette erzeugen und in dn Zwischenspeicher schreiben
+	     sprintf(buffer,"%ld ms: 0x%x \n\r",timestamp100ms,send->id);	// Zeichenkette erzeugen und in dn Zwischenspeicher schreiben
 	     UART.UsartPuts(buffer);		   // Ausgabe		
 		 return true;
 		}else{

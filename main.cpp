@@ -8,9 +8,9 @@
 
 void Timer_1_Compare_ISR_init();
 
-volatile uint32_t Zeitstempel = 0;
-volatile uint32_t Zeitstempel_100ms = 0;
-volatile bool flag_100ms = false;
+volatile uint32_t timestamp = 0;
+volatile uint32_t timestamp100ms = 0;
+volatile bool flag100ms = false;
 
 int main()
 {
@@ -44,22 +44,22 @@ int main()
 	while (1)
 	{
 
-		if (flag_100ms == true)
+		if (flag100ms == true)
 		{
 			cli();
-			Zeitstempel_100ms = (Zeitstempel * 100);
+			timestamp100ms= (timestamp * 100);
 			sei();
 			cnt++;
-			flag_100ms = false;
+			flag100ms = false;
 			lastValueMilliVolt = (V.convertMilliVoltage(V.readValue(6)));
 			V.addValue(lastValueMilliVolt);
 			if ((lastValueMilliVolt < 500) && (cnt % 2 == 0))
 			{
-				V.sendCanMessages(false, &sendmsg_nactiv, lastValueMilliVolt, Zeitstempel_100ms);
+				V.sendCanMessages(false, &sendmsg_nactiv, lastValueMilliVolt, timestamp100ms);
 			}
 			if ((lastValueMilliVolt >= 500))
 			{
-				V.sendCanMessages(true, &sendmsg_activ, lastValueMilliVolt, Zeitstempel_100ms);
+				V.sendCanMessages(true, &sendmsg_activ, lastValueMilliVolt, timestamp100ms);
 			}
 			if (cnt % 10 == 0)
 			{
@@ -121,8 +121,7 @@ void Timer_1_Compare_ISR_init()
 ISR(TIMER1_COMPA_vect)
 {
 	// tue etwas beim Überlauf von OCR1
-	Zeitstempel = Zeitstempel + 1; // Alle 100ms Zeitstemple inkrementieren
-	flag_100ms = true;
-
+	timestamp++; // Alle 100ms Zeitstemple inkrementieren
+	flag100ms = true;
 	TGL_BIT(LED_PORT, 0);
 }
