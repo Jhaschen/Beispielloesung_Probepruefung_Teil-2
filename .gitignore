@@ -1,0 +1,17 @@
+.build
+.mbed
+projectfiles
+*.py*
+BUILD
+compile_commands.json
+.clangd
+.cache
+resources
+.vscode
+*.eep
+*.elf
+*.hex
+*.lst
+*.o
+*.map
+.obj
