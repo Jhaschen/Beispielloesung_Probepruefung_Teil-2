@@ -81,7 +81,7 @@ SRC =
 
 
 # List C++ source files here. (C dependencies are automatically generated.)
-CPPSRC = main.cpp  ATMega32_utility_bib.cpp
+CPPSRC = main.cpp  ATMega32_utility_bib.cpp VoltageStatistics.cpp
 
 
 # List Assembler source files here.
